@@ -47,7 +47,7 @@ abstract class KeyedDataSource<Value> {
           _pagingDataBeingFetched.add(pageIndex);
           var preIndex = pageIndex - 1;
           if (preIndex != 0) {
-            if (_fetchedPagingData[preIndex].isNotEmpty == true) {
+            if (_fetchedPagingData[preIndex].isNotEmpty) {
               loadAfter(_fetchedPagingData[preIndex].last)
                   .then((newData) => _handleFetchedData(newData, pageIndex));
             }
@@ -67,12 +67,19 @@ abstract class KeyedDataSource<Value> {
   }
 
   void _handleFetchedData(List<Value> fetchedData, int pageIndex) {
+
     _fetchedPagingData[pageIndex] = fetchedData??[];
     _pagingDataBeingFetched.remove(pageIndex);
 
     List<Value> newData = [];
     List<int> pageIndexes = _fetchedPagingData.keys.toList();
     pageIndexes.sort((a, b) => a.compareTo(b));
+
+
+    //no more data available
+    if(pageIndexes.last == pageIndex && _fetchedPagingData[pageIndex].isEmpty){
+      _noMoreDataAvailable = true;
+    }
 
     final int minPageIndex = pageIndexes[0];
     final int maxPageIndex = pageIndexes[pageIndexes.length - 1];
@@ -87,6 +94,7 @@ abstract class KeyedDataSource<Value> {
         newData.addAll(_fetchedPagingData[i]);
       }
     }
+
 
     if (newData.isNotEmpty) {
       _inPagingDataList.add(newData);

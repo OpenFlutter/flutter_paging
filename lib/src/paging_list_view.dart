@@ -39,27 +39,29 @@ class PagingListView<T> extends StatelessWidget {
   final KeyedDataSource<T> dataSource;
 
   final Widget loadingIndicator;
+  final Widget noMoreDataAvailableItem;
 
-  PagingListView.builder({
-    Key key,
-    this.scrollDirection = Axis.vertical,
-    this.reverse = false,
-    this.controller,
-    this.primary,
-    this.physics,
-    this.shrinkWrap = false,
-    this.padding,
-    this.itemExtent,
-    @required this.itemBuilder,
-    @required this.dataSource,
-    this.addAutomaticKeepAlives = true,
-    this.addRepaintBoundaries = true,
-    this.addSemanticIndexes = true,
-    this.cacheExtent,
-    this.semanticChildCount,
-    this.dragStartBehavior = DragStartBehavior.start,
-    this.loadingIndicator,
-  })  : assert(dataSource != null),
+  PagingListView.builder(
+      {Key key,
+      this.scrollDirection = Axis.vertical,
+      this.reverse = false,
+      this.controller,
+      this.primary,
+      this.physics,
+      this.shrinkWrap = false,
+      this.padding,
+      this.itemExtent,
+      @required this.itemBuilder,
+      @required this.dataSource,
+      this.addAutomaticKeepAlives = true,
+      this.addRepaintBoundaries = true,
+      this.addSemanticIndexes = true,
+      this.cacheExtent,
+      this.semanticChildCount,
+      this.dragStartBehavior = DragStartBehavior.start,
+      this.loadingIndicator,
+      this.noMoreDataAvailableItem})
+      : assert(dataSource != null),
         assert(itemBuilder != null),
         separatorBuilder = null,
         fromBuilder = true;
@@ -80,7 +82,8 @@ class PagingListView<T> extends StatelessWidget {
       this.addRepaintBoundaries = true,
       this.addSemanticIndexes = true,
       this.cacheExtent,
-      this.loadingIndicator})
+      this.loadingIndicator,
+      this.noMoreDataAvailableItem})
       : assert(dataSource != null),
         assert(itemBuilder != null),
         assert(separatorBuilder != null),
@@ -95,10 +98,7 @@ class PagingListView<T> extends StatelessWidget {
         stream: dataSource.outPagingData,
         initialData: [],
         builder: (context, snapshot) {
-          int realItemCount = snapshot?.data?.length ?? 0;
-          int itemCount = dataSource.noMoreDataAvailable
-              ? realItemCount
-              : realItemCount + 1;
+          int itemCount = snapshot?.data?.length ?? 0 + 1;
 
           return ListView.builder(
             scrollDirection: scrollDirection,
@@ -120,10 +120,11 @@ class PagingListView<T> extends StatelessWidget {
               final T value =
                   (lists != null && lists.length > index) ? lists[index] : null;
 
-              print("empty ${dataSource.noMoreDataAvailable}");
               if (value == null) {
                 if (dataSource.noMoreDataAvailable) {
-                  return Container();
+                  return noMoreDataAvailableItem == null
+                      ? Container()
+                      : noMoreDataAvailableItem;
                 } else {
                   return loadingIndicator == null
                       ? Container()
