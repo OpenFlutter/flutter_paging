@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:rxdart/rxdart.dart';
 
 abstract class KeyedDataSource<Value> {
-
   Completer<Value> completer = Completer();
 
   final _fetchedPagingData = <int, List<Value>>{};
@@ -16,9 +15,12 @@ abstract class KeyedDataSource<Value> {
   BehaviorSubject<List<Value>> _pagingDataController = BehaviorSubject();
 
   Sink<List<Value>> get _inPagingDataList => _pagingDataController.sink;
+
   Stream<List<Value>> get outPagingData => _pagingDataController.stream;
 
+  bool _noMoreDataAvailable = false;
 
+  bool get noMoreDataAvailable => _noMoreDataAvailable;
 
   int get pageSize;
 
@@ -36,6 +38,7 @@ abstract class KeyedDataSource<Value> {
         _pagingDataBeingFetched.clear();
         _fetchedPagingData.clear();
         _inPagingDataList.add([]);
+        _noMoreDataAvailable = false;
         return;
       }
       final int pageIndex = 1 + (index + 1) ~/ pageSize ?? 10;
@@ -44,15 +47,17 @@ abstract class KeyedDataSource<Value> {
           _pagingDataBeingFetched.add(pageIndex);
           var preIndex = pageIndex - 1;
           if (preIndex != 0) {
-            if (_fetchedPagingData[preIndex].isNotEmpty) {
+            if (_fetchedPagingData[preIndex].isNotEmpty == true) {
               loadAfter(_fetchedPagingData[preIndex].last)
                   .then((newData) => _handleFetchedData(newData, pageIndex));
             }
           } else {
             loadInitial().then((newData) {
+              _noMoreDataAvailable = newData?.isEmpty == true;
               _handleFetchedData(newData, pageIndex);
               completer?.complete();
-            }).catchError((error){
+            }).catchError((error) {
+              _noMoreDataAvailable = true;
               completer?.complete();
             });
           }
@@ -61,11 +66,11 @@ abstract class KeyedDataSource<Value> {
     });
   }
 
-  void _handleFetchedData(List<Value> orderItems, int pageIndex) {
-    _fetchedPagingData[pageIndex] = orderItems;
+  void _handleFetchedData(List<Value> fetchedData, int pageIndex) {
+    _fetchedPagingData[pageIndex] = fetchedData??[];
     _pagingDataBeingFetched.remove(pageIndex);
 
-    List<Value> orders = [];
+    List<Value> newData = [];
     List<int> pageIndexes = _fetchedPagingData.keys.toList();
     pageIndexes.sort((a, b) => a.compareTo(b));
 
@@ -79,12 +84,12 @@ abstract class KeyedDataSource<Value> {
           break;
         }
         // Add the list of fetched movies to the list
-        orders.addAll(_fetchedPagingData[i]);
+        newData.addAll(_fetchedPagingData[i]);
       }
     }
 
-    if (orders.isNotEmpty) {
-      _inPagingDataList.add(orders);
+    if (newData.isNotEmpty) {
+      _inPagingDataList.add(newData);
     }
   }
 
@@ -92,7 +97,6 @@ abstract class KeyedDataSource<Value> {
     _pagingDataIndexController.close();
     _pagingDataController.close();
   }
-
 
   Future<List<Value>> loadInitial();
 

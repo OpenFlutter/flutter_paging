@@ -1,10 +1,10 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_paging/flutter_paging.dart';
+
 import 'paging_foundation.dart';
 
 class PagingListView<T> extends StatelessWidget {
-
   final bool fromBuilder;
 
   /// If non-null, forces the children to have the given extent in the scroll
@@ -36,8 +36,7 @@ class PagingListView<T> extends StatelessWidget {
   final int semanticChildCount;
   final DragStartBehavior dragStartBehavior;
 
-  final KeyedDataSource dataSource;
-
+  final KeyedDataSource<T> dataSource;
 
   final Widget loadingIndicator;
 
@@ -59,43 +58,48 @@ class PagingListView<T> extends StatelessWidget {
     this.cacheExtent,
     this.semanticChildCount,
     this.dragStartBehavior = DragStartBehavior.start,
-
     this.loadingIndicator,
-  })
-      : separatorBuilder = null,
-        fromBuilder=true;
+  })  : assert(dataSource != null),
+        assert(itemBuilder != null),
+        separatorBuilder = null,
+        fromBuilder = true;
 
-  PagingListView.separated({Key key,
-    this.scrollDirection = Axis.vertical,
-    this.reverse = false,
-    this.controller,
-    this.primary,
-    this.physics,
-    this.shrinkWrap = false,
-    this.padding,
-    @required this.itemBuilder,
-    @required this.separatorBuilder,
-    @required this.dataSource,
-    this.addAutomaticKeepAlives = true,
-    this.addRepaintBoundaries = true,
-    this.addSemanticIndexes = true,
-    this.cacheExtent,
-    this.loadingIndicator
-  })
-      : dragStartBehavior = null,
+  PagingListView.separated(
+      {Key key,
+      this.scrollDirection = Axis.vertical,
+      this.reverse = false,
+      this.controller,
+      this.primary,
+      this.physics,
+      this.shrinkWrap = false,
+      this.padding,
+      @required this.itemBuilder,
+      @required this.separatorBuilder,
+      @required this.dataSource,
+      this.addAutomaticKeepAlives = true,
+      this.addRepaintBoundaries = true,
+      this.addSemanticIndexes = true,
+      this.cacheExtent,
+      this.loadingIndicator})
+      : assert(dataSource != null),
+        assert(itemBuilder != null),
+        assert(separatorBuilder != null),
+        dragStartBehavior = null,
         semanticChildCount = null,
         itemExtent = null,
         fromBuilder = false;
-
-
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<List<T>>(
         stream: dataSource.outPagingData,
-        initialData: null,
+        initialData: [],
         builder: (context, snapshot) {
-          int itemCount = snapshot?.data?.length ?? 0 + 1;
+          int realItemCount = snapshot?.data?.length ?? 0;
+          int itemCount = dataSource.noMoreDataAvailable
+              ? realItemCount
+              : realItemCount + 1;
+
           return ListView.builder(
             scrollDirection: scrollDirection,
             reverse: reverse,
@@ -114,11 +118,17 @@ class PagingListView<T> extends StatelessWidget {
               dataSource.inPagingDataIndex.add(index);
               var lists = snapshot.data;
               final T value =
-              (lists != null && lists.length > index) ? lists[index] : null;
+                  (lists != null && lists.length > index) ? lists[index] : null;
+
+              print("empty ${dataSource.noMoreDataAvailable}");
               if (value == null) {
-                return loadingIndicator == null
-                    ? Container()
-                    : loadingIndicator;
+                if (dataSource.noMoreDataAvailable) {
+                  return Container();
+                } else {
+                  return loadingIndicator == null
+                      ? Container()
+                      : loadingIndicator;
+                }
               } else {
                 return itemBuilder(context, index, value);
               }
@@ -128,6 +138,3 @@ class PagingListView<T> extends StatelessWidget {
         });
   }
 }
-
-
-
