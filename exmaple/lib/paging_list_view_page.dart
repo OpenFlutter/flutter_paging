@@ -19,11 +19,13 @@ class _PagingListViewPageState extends State<PagingListViewPage> {
       ),
       body: RefreshIndicator(
         onRefresh: () async {
+          widget.dataSource.inPagingDataIndex.add(-1);
           await widget.dataSource.completer.future;
         },
         child: PagingListView<String>.builder(
           itemBuilder: (context, index, item) {
-            return Card(child: Padding(
+            return Card(
+                child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(item),
             ));
@@ -35,5 +37,11 @@ class _PagingListViewPageState extends State<PagingListViewPage> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    widget.dataSource.close();
+    super.dispose();
   }
 }
