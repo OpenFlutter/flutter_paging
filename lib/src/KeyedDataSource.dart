@@ -3,6 +3,9 @@ import 'dart:async';
 import 'package:rxdart/rxdart.dart';
 
 abstract class KeyedDataSource<Value> {
+
+  Completer<Value> completer = Completer();
+
   final _fetchedPagingData = <int, List<Value>>{};
   final _pagingDataBeingFetched = Set<int>();
 
@@ -48,6 +51,9 @@ abstract class KeyedDataSource<Value> {
           } else {
             loadInitial().then((newData) {
               _handleFetchedData(newData, pageIndex);
+              completer?.complete();
+            }).catchError((error){
+              completer?.complete();
             });
           }
         }
