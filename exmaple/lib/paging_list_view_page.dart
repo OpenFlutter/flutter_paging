@@ -24,12 +24,15 @@ class _PagingListViewPageState extends State<PagingListViewPage> {
             return Card(
                 child: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Text(item),
+              child: Text("paging->$item"),
             ));
           },
           dataSource: widget.dataSource,
           loadingIndicator: Center(
-            child: CircularProgressIndicator(),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: CircularProgressIndicator(),
+            ),
           ),
           noMoreDataAvailableItem: Center(
             child: Padding(
