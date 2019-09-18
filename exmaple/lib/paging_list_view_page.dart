@@ -31,6 +31,12 @@ class _PagingListViewPageState extends State<PagingListViewPage> {
           loadingIndicator: Center(
             child: CircularProgressIndicator(),
           ),
+          noMoreDataAvailableItem: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text("no more data avaliable~"),
+            ),
+          ),
         ),
       ),
     );
@@ -38,7 +44,7 @@ class _PagingListViewPageState extends State<PagingListViewPage> {
 
   @override
   void dispose() {
-    widget.dataSource.close();
+//    widget.dataSource.close();
     super.dispose();
   }
 }
