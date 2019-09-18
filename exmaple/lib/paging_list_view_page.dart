@@ -18,10 +18,7 @@ class _PagingListViewPageState extends State<PagingListViewPage> {
         title: Text("Paging ListView"),
       ),
       body: RefreshIndicator(
-        onRefresh: () async {
-          widget.dataSource.inPagingDataIndex.add(-1);
-          await widget.dataSource.completer.future;
-        },
+        onRefresh: widget.dataSource.refresh,
         child: PagingListView<String>.builder(
           itemBuilder: (context, index, item) {
             return Card(
