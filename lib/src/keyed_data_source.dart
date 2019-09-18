@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:rxdart/rxdart.dart';
 
 abstract class KeyedDataSource<Value> {
-  Completer<Value> completer = Completer();
+  Completer<List<Value>> _completer = Completer();
 
   final _fetchedPagingData = <int, List<Value>>{};
   final _pagingDataBeingFetched = Set<int>();
@@ -55,10 +55,10 @@ abstract class KeyedDataSource<Value> {
             loadInitial().then((newData) {
               _noMoreDataAvailable = newData?.isEmpty == true;
               _handleFetchedData(newData, pageIndex);
-              completer?.complete();
+              _completer?.complete(Future.value(newData));
             }).catchError((error) {
               _noMoreDataAvailable = true;
-              completer?.complete();
+              _completer?.complete();
             });
           }
         }
@@ -67,17 +67,16 @@ abstract class KeyedDataSource<Value> {
   }
 
   void _handleFetchedData(List<Value> fetchedData, int pageIndex) {
-
-    _fetchedPagingData[pageIndex] = fetchedData??[];
+    _fetchedPagingData[pageIndex] = fetchedData ?? [];
     _pagingDataBeingFetched.remove(pageIndex);
 
     List<Value> newData = [];
     List<int> pageIndexes = _fetchedPagingData.keys.toList();
     pageIndexes.sort((a, b) => a.compareTo(b));
 
-
     //no more data available
-    if(pageIndexes.last == pageIndex && _fetchedPagingData[pageIndex].isEmpty){
+    if (pageIndexes.last == pageIndex &&
+        _fetchedPagingData[pageIndex].isEmpty) {
       _noMoreDataAvailable = true;
     }
 
@@ -95,7 +94,6 @@ abstract class KeyedDataSource<Value> {
       }
     }
 
-
     if (newData.isNotEmpty) {
       _inPagingDataList.add(newData);
     }
@@ -104,6 +102,11 @@ abstract class KeyedDataSource<Value> {
   void close() {
     _pagingDataIndexController.close();
     _pagingDataController.close();
+  }
+
+  Future<List<Value>> refresh() async {
+    inPagingDataIndex.add(-1);
+    return await _completer.future;
   }
 
   Future<List<Value>> loadInitial();
