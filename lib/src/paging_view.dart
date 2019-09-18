@@ -1,10 +1,11 @@
 import 'package:flutter/widgets.dart';
+import 'package:flutter_paging/flutter_paging.dart';
 
 import 'keyed_data_source.dart';
 
 class PagingView<Value> extends StatefulWidget {
   final KeyedDataSource<Value> dataSource;
-  final Widget builder;
+  final PagingWidgetBuilder builder;
   final bool autoCloseStream;
 
   const PagingView(
@@ -34,9 +35,10 @@ class _PagingViewState<Value> extends State<PagingView> {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<List<Value>>(
+        initialData: [],
         stream: dataSource.outPagingData,
         builder: (context, snapshot) {
-          return Container();
+          return widget.builder(context,snapshot.data);
         });
   }
 }

@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_paging/flutter_paging.dart';
 
 import 'paging_foundation.dart';
+import 'paging_view.dart';
 
 class PagingListView<T> extends StatelessWidget {
   final bool fromBuilder;
@@ -24,7 +25,7 @@ class PagingListView<T> extends StatelessWidget {
   final bool shrinkWrap;
   final EdgeInsetsGeometry padding;
 
-  final PagingWidgetBuilder<T> itemBuilder;
+  final PagingItemWidgetBuilder<T> itemBuilder;
 
   final IndexedWidgetBuilder separatorBuilder;
 
@@ -94,12 +95,13 @@ class PagingListView<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<List<T>>(
-        stream: dataSource.outPagingData,
-        initialData: [],
-        builder: (context, snapshot) {
-          int itemCount = snapshot?.data?.length ?? 0 + 1;
-
+    return PagingView<T>(
+        dataSource: dataSource,
+        builder: (context, items) {
+          int itemCount = 1;
+          if (items != null) {
+            itemCount = items.length + 1;
+          }
           return ListView.builder(
             scrollDirection: scrollDirection,
             reverse: reverse,
@@ -116,7 +118,7 @@ class PagingListView<T> extends StatelessWidget {
             dragStartBehavior: dragStartBehavior,
             itemBuilder: (context, index) {
               dataSource.inPagingDataIndex.add(index);
-              var lists = snapshot.data;
+              var lists = items;
               final T value =
                   (lists != null && lists.length > index) ? lists[index] : null;
 
