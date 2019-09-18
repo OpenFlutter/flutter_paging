@@ -112,7 +112,7 @@ abstract class KeyedDataSource<Value> {
   Future<List<Value>> refresh() async {
     inPagingDataIndex.add(-1);
     _noMoreDataAvailable = false;
-    _completer = Completer;
+    _completer = Completer();
     return await _completer.future;
   }
 
