@@ -16,17 +16,22 @@ abstract class KeyedDataSource<Value> {
 
   Sink<List<Value>> get _inPagingDataList => _pagingDataController.sink;
 
+  ///total data obtained
   Stream<List<Value>> get outPagingData => _pagingDataController.stream;
 
   bool _noMoreDataAvailable = false;
 
   bool get noMoreDataAvailable => _noMoreDataAvailable;
 
+  Duration get bufferDuration => Duration(microseconds: 500);
+
+
+  ///data count per page
   int get pageSize;
 
   void init() {
     _pagingDataIndexController
-        .bufferTime(Duration(microseconds: 500))
+        .bufferTime(bufferDuration??Duration(microseconds: 500))
         // and, do not update where this is no need
         .where((batch) => batch.isNotEmpty)
         .listen(_handlePagingIndexes);
@@ -107,7 +112,7 @@ abstract class KeyedDataSource<Value> {
   Future<List<Value>> refresh() async {
     inPagingDataIndex.add(-1);
     _noMoreDataAvailable = false;
-    _completer = Completer();
+    _completer = Completer;
     return await _completer.future;
   }
 
