@@ -1,29 +1,29 @@
 # flutter_paging [![pub package](https://img.shields.io/pub/v/flutter_paging.svg)](https://pub.dartlang.org/packages/flutter_paging)
 
-Paging your widgets. Decoupling UI and data.
+分布加载，实现数据与UI解耦。
 
 
 <img src="https://github.com/OpenFlutter/flutter_paging/blob/master/arts/paging.gif" width="300" height="480">
 
 
-Note: This plugin is still under development. [Pull Requests](https://github.com/OpenFlutter/flutter_paging/pulls) are most welcome.
+Note: 这个项目还处于开发阶段. 欢迎[Pull Requests](https://github.com/OpenFlutter/flutter_paging/pulls).
 
 
-## Installation
+## 安装
 
-First, add `flutter_paging` as a [dependency in your pubspec.yaml file](https://flutter.io/using-packages/).
+首先, 添加 `flutter_paging`，参加[dependency in your pubspec.yaml file](https://flutter.io/using-packages/).
 
-## Widgets Included
+## Widgets 
 
-- PagingView : Base paging view.
+- PagingView : 分页组件基础控件.
 
-- PagingListView : Quick implementation of ListView supports paging.
+- PagingListView : PagingView的子类，包裹了ListView.
 
 ## KeyedDataSource
 
-`KeyedDataSource` is core of paging. Try something else with `KeyedDataSource`  
+`KeyedDataSource` 分页的核心，数据的获取由`dataSource`完成。
 
-Note: don't forget to call `dataSource.init()`
+Note: 不要忘记调用 `dataSource.init()`
 
 
 ## Example
