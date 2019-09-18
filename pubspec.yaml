@@ -1,8 +1,8 @@
 name: flutter_paging
-description: Paginating endless widgets, like jetpack paging.
+description: Paging your widgets from local or storage.
 version: 0.0.1
-author:
-homepage:
+author: JarvanMo <jarvan.mo@gmail.com>
+homepage: https://github.com/OpenFlutter/flutter_paging
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
