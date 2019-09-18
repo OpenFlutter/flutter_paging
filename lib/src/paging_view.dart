@@ -26,7 +26,7 @@ class _PagingViewState<Value> extends State<PagingView> {
 
   @override
   void dispose() {
-    if(widget.autoCloseStream == true){
+    if (widget.autoCloseStream == true) {
       dataSource?.close();
     }
     super.dispose();
@@ -38,7 +38,7 @@ class _PagingViewState<Value> extends State<PagingView> {
         initialData: [],
         stream: dataSource.outPagingData,
         builder: (context, snapshot) {
-          return widget.builder(context,snapshot.data);
+          return widget.builder(context, snapshot.data);
         });
   }
 }

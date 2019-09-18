@@ -25,13 +25,12 @@ abstract class KeyedDataSource<Value> {
 
   Duration get bufferDuration => Duration(microseconds: 500);
 
-
   ///data count per page
   int get pageSize;
 
   void init() {
     _pagingDataIndexController
-        .bufferTime(bufferDuration??Duration(microseconds: 500))
+        .bufferTime(bufferDuration ?? Duration(microseconds: 500))
         // and, do not update where this is no need
         .where((batch) => batch.isNotEmpty)
         .listen(_handlePagingIndexes);
