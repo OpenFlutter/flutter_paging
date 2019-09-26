@@ -42,6 +42,8 @@ class PagingListView<T> extends StatelessWidget {
   final Widget loadingIndicator;
   final Widget noMoreDataAvailableItem;
 
+  final bool autoCloseStream;
+
   PagingListView.builder(
       {Key key,
       this.scrollDirection = Axis.vertical,
@@ -61,7 +63,8 @@ class PagingListView<T> extends StatelessWidget {
       this.semanticChildCount,
       this.dragStartBehavior = DragStartBehavior.start,
       this.loadingIndicator,
-      this.noMoreDataAvailableItem})
+      this.noMoreDataAvailableItem,
+      this.autoCloseStream})
       : assert(dataSource != null),
         assert(itemBuilder != null),
         separatorBuilder = null,
@@ -84,7 +87,8 @@ class PagingListView<T> extends StatelessWidget {
       this.addSemanticIndexes = true,
       this.cacheExtent,
       this.loadingIndicator,
-      this.noMoreDataAvailableItem})
+      this.noMoreDataAvailableItem,
+      this.autoCloseStream})
       : assert(dataSource != null),
         assert(itemBuilder != null),
         assert(separatorBuilder != null),
@@ -97,6 +101,7 @@ class PagingListView<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     return PagingView<T>(
         dataSource: dataSource,
+        autoCloseStream: autoCloseStream,
         builder: (context, items) {
           int itemCount = 1;
           if (items != null) {
