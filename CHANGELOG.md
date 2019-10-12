@@ -1,3 +1,7 @@
+## 0.0.3
+* add PagingItemWidget
+
+
 ## 0.0.2
 
 * Enable autoCloseStream in PagingListView.
