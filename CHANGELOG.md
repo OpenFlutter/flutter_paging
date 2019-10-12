@@ -1,3 +1,6 @@
+## 0.0.3+1
+* export PagingItemWidget
+
 ## 0.0.3
 * add PagingItemWidget
 
