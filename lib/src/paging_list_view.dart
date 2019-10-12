@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_paging/flutter_paging.dart';
+import 'package:flutter_paging/src/paing_item_widget.dart';
 
 import 'paging_foundation.dart';
 import 'paging_view.dart';
@@ -121,26 +122,14 @@ class PagingListView<T> extends StatelessWidget {
             cacheExtent: cacheExtent,
             semanticChildCount: semanticChildCount,
             dragStartBehavior: dragStartBehavior,
-            itemBuilder: (context, index) {
-              dataSource.inPagingDataIndex.add(index);
-              var lists = items;
-              final T value =
-                  (lists != null && lists.length > index) ? lists[index] : null;
-
-              if (value == null) {
-                if (dataSource.noMoreDataAvailable) {
-                  return noMoreDataAvailableItem == null
-                      ? Container()
-                      : noMoreDataAvailableItem;
-                } else {
-                  return loadingIndicator == null
-                      ? Container()
-                      : loadingIndicator;
-                }
-              } else {
-                return itemBuilder(context, index, value);
-              }
-            },
+            itemBuilder: (context, index) => PagingItemWidget<T>(
+              itemBuilder: itemBuilder,
+              dataSource: dataSource,
+              loadingIndicator: this.loadingIndicator,
+              noMoreDataAvailableItem: this.noMoreDataAvailableItem,
+              index: index,
+              snapshot: items,
+            ),
             itemCount: itemCount,
           );
         });
