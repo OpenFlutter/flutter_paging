@@ -28,6 +28,9 @@ abstract class KeyedDataSource<Value> {
   ///data count per page
   int get pageSize;
 
+  bool _closed = false;
+  bool get closed => _closed;
+
   void init() {
     _pagingDataIndexController
         .bufferTime(bufferDuration ?? Duration(microseconds: 500))
@@ -41,14 +44,18 @@ abstract class KeyedDataSource<Value> {
       if (index < 0) {
         _pagingDataBeingFetched.clear();
         _fetchedPagingData.clear();
-        _inPagingDataList.add([]);
+        if(!closed) {
+          _inPagingDataList.add([]);
+        }
         _noMoreDataAvailable = false;
         return;
       }
       final int pageIndex = 1 + (index + 1) ~/ pageSize ?? 10;
       if (!_fetchedPagingData.containsKey(pageIndex)) {
         if (!_pagingDataBeingFetched.contains(pageIndex)) {
-          _pagingDataBeingFetched.add(pageIndex);
+          if(!closed) {
+            _pagingDataBeingFetched.add(pageIndex);
+          }
           var preIndex = pageIndex - 1;
           if (preIndex != 0) {
             if (_fetchedPagingData[preIndex].isNotEmpty) {
@@ -57,7 +64,8 @@ abstract class KeyedDataSource<Value> {
             }
           } else {
             loadInitial().then((newData) {
-              _noMoreDataAvailable = newData?.isEmpty == true;
+              int length = newData?.length??0;
+              _noMoreDataAvailable = newData?.isEmpty == true || length < pageSize;
               _handleFetchedData(newData, pageIndex);
               _completer?.complete(Future.value(newData));
             }).catchError((error) {
@@ -98,18 +106,23 @@ abstract class KeyedDataSource<Value> {
       }
     }
 
-    if (newData.isNotEmpty) {
+    if (newData.isNotEmpty && !closed) {
       _inPagingDataList.add(newData);
     }
   }
 
+
+  ///can't use these streams after closed
   void close() {
     _pagingDataIndexController.close();
     _pagingDataController.close();
+    _closed = true;
   }
 
   Future<List<Value>> refresh() async {
-    inPagingDataIndex.add(-1);
+    if(!closed){
+      inPagingDataIndex.add(-1);
+    }
     _noMoreDataAvailable = false;
     _completer = Completer();
     return await _completer.future;
