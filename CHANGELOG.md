@@ -1,3 +1,8 @@
+## 0.0.5
+
+* Fix Bug: StreamController.add won't be called once KeyedDataSource closed
+* add `closed` property in KeyedDataSource
+
 ## 0.0.4
 
 * fix bug
