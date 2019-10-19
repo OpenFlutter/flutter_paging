@@ -44,7 +44,7 @@ abstract class KeyedDataSource<Value> {
       if (index < 0) {
         _pagingDataBeingFetched.clear();
         _fetchedPagingData.clear();
-        if(!closed) {
+        if (!closed) {
           _inPagingDataList.add([]);
         }
         _noMoreDataAvailable = false;
@@ -53,7 +53,7 @@ abstract class KeyedDataSource<Value> {
       final int pageIndex = 1 + (index + 1) ~/ pageSize ?? 10;
       if (!_fetchedPagingData.containsKey(pageIndex)) {
         if (!_pagingDataBeingFetched.contains(pageIndex)) {
-          if(!closed) {
+          if (!closed) {
             _pagingDataBeingFetched.add(pageIndex);
           }
           var preIndex = pageIndex - 1;
@@ -64,8 +64,9 @@ abstract class KeyedDataSource<Value> {
             }
           } else {
             loadInitial().then((newData) {
-              int length = newData?.length??0;
-              _noMoreDataAvailable = newData?.isEmpty == true || length < pageSize;
+              int length = newData?.length ?? 0;
+              _noMoreDataAvailable =
+                  newData?.isEmpty == true || length < pageSize;
               _handleFetchedData(newData, pageIndex);
               _completer?.complete(Future.value(newData));
             }).catchError((error) {
@@ -111,7 +112,6 @@ abstract class KeyedDataSource<Value> {
     }
   }
 
-
   ///can't use these streams after closed
   void close() {
     _pagingDataIndexController.close();
@@ -120,7 +120,7 @@ abstract class KeyedDataSource<Value> {
   }
 
   Future<List<Value>> refresh() async {
-    if(!closed){
+    if (!closed) {
       inPagingDataIndex.add(-1);
     }
     _noMoreDataAvailable = false;
