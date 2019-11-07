@@ -58,7 +58,7 @@ abstract class KeyedDataSource<Value> {
           }
           var preIndex = pageIndex - 1;
           if (preIndex != 0) {
-            if (_fetchedPagingData[preIndex].isNotEmpty) {
+            if (_fetchedPagingData[preIndex]?.isNotEmpty==true) {
               loadAfter(_fetchedPagingData[preIndex].last)
                   .then((newData) => _handleFetchedData(newData, pageIndex));
             }
