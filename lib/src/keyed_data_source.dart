@@ -120,11 +120,12 @@ abstract class KeyedDataSource<Value> {
   }
 
   Future<List<Value>> refresh() async {
+    _completer = Completer();
+
     if (!closed) {
       inPagingDataIndex.add(-1);
     }
     _noMoreDataAvailable = false;
-    _completer = Completer();
     return await _completer.future;
   }
 
