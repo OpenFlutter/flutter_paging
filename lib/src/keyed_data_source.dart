@@ -29,6 +29,7 @@ abstract class KeyedDataSource<Value> {
   int get pageSize;
 
   bool _closed = false;
+
   bool get closed => _closed;
 
   void init() {
@@ -58,7 +59,7 @@ abstract class KeyedDataSource<Value> {
           }
           var preIndex = pageIndex - 1;
           if (preIndex != 0) {
-            if (_fetchedPagingData[preIndex]?.isNotEmpty==true) {
+            if (_fetchedPagingData[preIndex]?.isNotEmpty == true) {
               loadAfter(_fetchedPagingData[preIndex].last)
                   .then((newData) => _handleFetchedData(newData, pageIndex));
             }
@@ -107,7 +108,10 @@ abstract class KeyedDataSource<Value> {
       }
     }
 
-    if (newData.isNotEmpty && !closed) {
+//    if (newData.isNotEmpty && !closed) {
+//      _inPagingDataList.add(newData);
+//    }
+    if (!closed) {
       _inPagingDataList.add(newData);
     }
   }
