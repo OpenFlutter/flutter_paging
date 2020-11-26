@@ -1,3 +1,6 @@
+## 0.1.0
+* call init() in KeyedDataSource constructor.
+
 ## 0.0.5
 
 * Fix Bug: StreamController.add won't be called once KeyedDataSource closed
