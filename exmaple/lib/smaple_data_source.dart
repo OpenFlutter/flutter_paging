@@ -1,9 +1,6 @@
 import 'package:flutter_paging/flutter_paging.dart';
 
-class StringDataSource with KeyedDataSource<String> {
-  StringDataSource() {
-    init();
-  }
+class StringDataSource extends KeyedDataSource<String> {
 
   @override
   Future<List<String>> loadAfter(String value) {

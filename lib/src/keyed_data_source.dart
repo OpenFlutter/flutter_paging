@@ -32,6 +32,10 @@ abstract class KeyedDataSource<Value> {
 
   bool get closed => _closed;
 
+  KeyedDataSource() {
+    init();
+  }
+
   void init() {
     _pagingDataIndexController
         .bufferTime(bufferDuration ?? Duration(microseconds: 500))

@@ -1,7 +1,6 @@
 name: flutter_paging
 description: Paging your widgets from local or storage. Decoupling UI and data.
-version: 0.0.5
-author: JarvanMo <jarvan.mo@gmail.com>
+version: 0.1.0
 homepage: https://github.com/OpenFlutter/flutter_paging
 
 environment:
