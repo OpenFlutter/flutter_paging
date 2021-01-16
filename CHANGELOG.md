@@ -1,4 +1,8 @@
+## 0.1.1
+* Fix completer bug.
+
 ## 0.1.0
+
 * call init() in KeyedDataSource constructor.
 
 ## 0.0.5
