@@ -73,9 +73,11 @@ abstract class KeyedDataSource<Value> {
               _noMoreDataAvailable =
                   newData?.isEmpty == true || length < pageSize;
               _handleFetchedData(newData, pageIndex);
+              _createCompleter();
               _completer?.complete(Future.value(newData));
             }).catchError((error) {
               _noMoreDataAvailable = true;
+              _createCompleter();
               _completer?.complete();
             });
           }
@@ -135,6 +137,12 @@ abstract class KeyedDataSource<Value> {
     }
     _noMoreDataAvailable = false;
     return await _completer.future;
+  }
+
+  _createCompleter(){
+    if(_completer.isCompleted){
+      _completer = Completer();
+    }
   }
 
   Future<List<Value>> loadInitial();
